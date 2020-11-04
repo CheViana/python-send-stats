@@ -1,12 +1,19 @@
 # Send measurements from Python code to Telegraf/InfluxDB/Grafana
 
-## Setup Grafana, InfluxDB, Telegraf
+## Setup Grafana, InfluxDB
 
-See previous post. (recap?)
+In short, install Grafana, InfluxDB and launch with default config:
+
+> cd /grafana-7.1.0
+> bin/grafana-server
+
+> influxd -config /usr/local/etc/influxdb.conf
+
+See previous post for details in how to install. (TODO: add link)
 
 ## Telegraf config
 
-Make telegraf listen on Unix socket "unix:///tmp/telegraf.sock", or choose TCP socket, or UDP socket
+We're going to make Telegraf listen on Unix socket "unix:///tmp/telegraf.sock" for JSON-formatted measurements.
 
 https://github.com/influxdata/telegraf/blob/release-1.14/plugins/inputs/socket_listener/README.md
 https://github.com/influxdata/telegraf/tree/master/plugins/parsers/json
@@ -22,6 +29,7 @@ telegraf.conf:
 [[inputs.socket_listener]]
   service_address = "unix:///tmp/telegraf.sock"
   data_format = "json"
+
 
 Launch telegraf to listen on /tmp/telegraf.sock:
 
@@ -65,5 +73,6 @@ Create new dashboard, add panel which will display measurements sent to /tmp/tel
 [tutorial-materials/command-line-stats.png]
 
 
-## Only close socket when program quits 
-## Try to run into socket listen queue overflow
+## TODO: Only close socket when program quits 
+## TODO: Try to run into socket listen queue overflow, socket listen queue increase
+## TODO: Django example 

@@ -1,0 +1,6 @@
+(
+    socket listener input plugin to listen to stats reported from Python code, and
+    input plugin for monitoring system resources consumption (?).
+    use telegraf to watch it's own listen queue?
+    https://github.com/influxdata/telegraf/blob/release-1.14/plugins/inputs/socket_listener/README.md
+)

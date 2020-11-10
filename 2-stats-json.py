@@ -30,7 +30,7 @@ def close_socket():
 def send_data_on_socket(data):
     try:
         sock = socket_store['socket']
-        sent = sock.send(json.dumps(data).encode('utf-8'))
+        sent = sock.send((json.dumps(data) + '\n').encode('utf-8'))
         print(f'Sending sample data... {sent}')
     except (KeyError, socket.error) as e:
         print(f'Got error while sending data on socket: {e}')

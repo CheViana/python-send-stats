@@ -1,8 +1,8 @@
 import time
 import socket
-import json
 import random
 import atexit
+import math
 
 
 socket_store = {}
@@ -13,7 +13,6 @@ def create_socket():
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('127.0.0.1', 8094))
         socket_store['socket'] = sock
-        sock.send('['.encode('utf-8'))
         print('Created socket')
     except socket.error as e:
         print(f'Got error while creating socket: {e}')
@@ -22,7 +21,6 @@ def create_socket():
 def close_socket():
     try:
         sock = socket_store['socket']
-        sock.send((json.dumps({'value1': 0, 'value2': 5}) + ']').encode('utf-8'))
         sock.close()
         print('Closed socket')
     except (KeyError, socket.error) as e:
@@ -32,11 +30,11 @@ def close_socket():
 def send_data_on_socket(data):
     try:
         sock = socket_store['socket']
-        json_str = json.dumps(data)
-        json_str = json_str + ','
-        print(f'Ready to send: {json_str}')
-        sent = sock.send(json_str.encode('utf-8'))
-        print(f'Sending sample data... {sent}')
+        for key, value in data.items():
+            line = f'test.{key} {value} {math.floor(time.time())} source=localhost\n'
+            print(f'Ready to send: {line}')
+            sent = sock.send(line.encode('utf-8'))
+            print(f'Sent {sent} bytes')
     except (KeyError, socket.error) as e:
         print(f'Got error while sending data on socket: {e}')
 

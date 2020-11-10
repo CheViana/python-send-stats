@@ -1,4 +1,18 @@
-# Send measurements from Python code to Telegraf/InfluxDB/Grafana
+# Reporting measurements from Python code in real time
+
+Simple example how to send measurements from Python code to the real-time monitoring solution (Telegraf/InfluxDB/Grafana).
+
+Measurements can be:
+- how long did backend call take
+- size of image that is being processed right now
+- processing time of uploaded file
+- percent of file that is already processed, and percent that's left
+- how much files were processed since process start
+- any number that program code is aware of and that might be of use to keep track of
+
+Observing measurements like that in real time can be very beneficial: notice problems early, pinpoint the cause why webserver is down, notice weird pattern in performnace, etc.
+
+Program can send dozens measurements a second, without significant performance degradation, although with chance that some measurements are lost. For better reliability other approaches are recommended - database, temp file.
 
 ## Setup Grafana, InfluxDB
 
@@ -73,6 +87,28 @@ Create new dashboard, add panel which will display measurements sent to /tmp/tel
 [tutorial-materials/command-line-stats.png]
 
 
-## TODO: Only close socket when program quits 
+## Better socket management
+
+It's an overhead to open and close socket each time.
+Let's try to open when program starts and close when it exits.
+To execute function on program exit will make use of `atexit` module.
+
+[manage-socket-not-working.py] - explain why. Telegraf command line errors.
+
+2020-11-10T14:42:17Z E! [inputs.socket_listener] Unable to parse incoming line: invalid character '{' after top-level value
+
+[tutorial-materials/socket-not-working-lsof.png]
+
+[manage-socket-buffer.py] - works. Explain memory, etc.
+
+[tutorial-materials/socket-manage-buffer-1.png]
+[tutorial-materials/socket-manage-buffer-2.png]
+
+
+[manage-socket-not-working-2.py] - also not working. Telegraf command line errors.
+
+
+try wavelength format instead.
+
+
 ## TODO: Try to run into socket listen queue overflow, socket listen queue increase
-## TODO: Django example 

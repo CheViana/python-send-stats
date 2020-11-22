@@ -1,13 +1,20 @@
 import time
 import socket
-import json
+import math
 import random
 import atexit
 
 
-def format_measurement_data_json(data):
-    data['format'] = 'json'
-    return json.dumps(data) + '\n'
+def format_measurement_data_wavefront(data):
+    lines = []
+    for key, value in data.items():
+        line = (
+            f'prefix_metric_name.{key} {value} '
+            f'{math.floor(time.time())} '
+            f'source=localhost format="wavefront"\n'
+        )
+        lines.append(line)
+    return ''.join(lines)
 
 
 class StatsReporter:
@@ -55,9 +62,9 @@ class StatsReporter:
 
 
 reporter = StatsReporter(
-    (socket.AF_UNIX, ),
-    '/tmp/telegraf.sock',
-    formatter=format_measurement_data_json
+    (socket.AF_INET, socket.SOCK_STREAM),
+    ('127.0.0.1', 8094),
+    formatter=format_measurement_data_wavefront
 )
 atexit.register(reporter.close_socket)
 

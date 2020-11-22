@@ -1,13 +1,25 @@
 import time
 import socket
-import json
+import math
 import random
 import atexit
 
 
-def format_measurement_data_json(data):
-    data['format'] = 'json'
-    return json.dumps(data) + '\n'
+def format_measurement_to_str_influxline(data):
+    measurement_name = 'good_metric_name'
+
+    fields = []
+    for key, value in data.items():
+        fields.append(f'{key}={value}')
+    fields_str = ','.join(fields)
+
+    tags = {'format': 'influxline'}
+    tags_strs = []
+    for tag_key, tag_value in tags.items():
+        tags_strs.append(f'{tag_key}={tag_value}')
+    tags_str = (',' + ','.join(tags_strs)) if tags else ''
+
+    return f'{measurement_name}{tags_str} {fields_str}\n'
 
 
 class StatsReporter:
@@ -27,7 +39,7 @@ class StatsReporter:
     def create_socket(self):
         try:
             sock = socket.socket(*self._socket_type)
-            sock.connect(self._socket_address)
+            # no sock.connect
             self._sock = sock
             print('Created socket')
         except socket.error as e:
@@ -42,8 +54,9 @@ class StatsReporter:
 
     def send_data(self, data):
         try:
-            sent = self._sock.send(
-                self._formatter(data).encode(self._encoding)
+            sent = self._sock.sendto(
+                self._formatter(data).encode(self._encoding),
+                self._socket_address
             )
             print(f'Sending sample data... {sent}')
         except (AttributeError, socket.error) as e:
@@ -55,9 +68,9 @@ class StatsReporter:
 
 
 reporter = StatsReporter(
-    (socket.AF_UNIX, ),
-    '/tmp/telegraf.sock',
-    formatter=format_measurement_data_json
+    (socket.AF_INET, socket.SOCK_DGRAM),
+    ('localhost', 8094),
+    formatter=format_measurement_to_str_influxline
 )
 atexit.register(reporter.close_socket)
 

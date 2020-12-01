@@ -4,3 +4,13 @@
     use telegraf to watch it's own listen queue?
     https://github.com/influxdata/telegraf/blob/release-1.14/plugins/inputs/socket_listener/README.md
 )
+
+## What I might write about in next post:
+
+- overloading TCP socket (Unix socket, UDP socket) with metrics, and checking out what happens
+- looking into `read_buffer_size` in Telegraf config and system socket listen queue size
+- techniques to measure dropped readings rate
+- reporting stats of backend calls (`aiohttp` and `requests`)
+- optimal uWSGI configurations, for best performance when all is good, and backend failure-resistant
+- babel 7 configurations
+- python tests in parallel 

@@ -8,7 +8,7 @@ while True:
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.sendto(
-            json.dumps({'value1': 10, 'value2': random.randint(1, 10)}).encode(),
+            json.dumps({'value1': 10, 'value2': random.randint(1, 10), 'metric_name': 'good_metric_name'}).encode(),
             ('localhost', 8094)
         )
         print('Sending sample data...')
